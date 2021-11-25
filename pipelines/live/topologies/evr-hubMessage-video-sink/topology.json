@@ -85,9 +85,9 @@
           }
         ],
         "activationEvaluationWindow": "PT1S",
-        "activationSignalOffset": "-PT5S",
-        "minimumActivationTime": "PT30S",
-        "maximumActivationTime": "PT30S"
+        "activationSignalOffset": "-PT2S",
+        "minimumActivationTime": "PT15S",
+        "maximumActivationTime": "PT5S"
       },
       {
         "@type": "#Microsoft.VideoAnalyzer.HttpExtension",
@@ -159,7 +159,7 @@
         "videoCreationProperties": {
           "title": "mc-hub-messages-video-sink",
           "description": "Sample video using hub messages to video sink",
-          "segmentLength": "PT30S"
+          "segmentLength": "PT15S"
         },
         "localMediaCachePath": "/var/lib/videoanalyzer/tmp/",
         "localMediaCacheMaximumSizeMiB": "2048"
