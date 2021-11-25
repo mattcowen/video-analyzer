@@ -20,6 +20,7 @@ WORKDIR /live/mediaServer
 
 ADD ./win10.mkv /live/mediaServer/media/
 ADD ./camera-300s.mkv /live/mediaServer/media/
+ADD ./lots_015.mkv /live/mediaServer/media/
 
 EXPOSE 554
 

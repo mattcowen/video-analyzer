@@ -113,7 +113,7 @@
         },
         "samplingOptions": {
           "skipSamplesWithoutAnnotation": "false",
-          "maximumSamplesPerSecond": "5"
+          "maximumSamplesPerSecond": "10"
         },
         "inputs": [
           {
