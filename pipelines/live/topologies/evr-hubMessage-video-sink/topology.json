@@ -159,7 +159,7 @@
         "videoCreationProperties": {
           "title": "mc-hub-messages-video-sink",
           "description": "Sample video using hub messages to video sink",
-          "segmentLength": "PT15S"
+          "segmentLength": "PT30S"
         },
         "localMediaCachePath": "/var/lib/videoanalyzer/tmp/",
         "localMediaCacheMaximumSizeMiB": "2048"
