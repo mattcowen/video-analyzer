@@ -157,7 +157,7 @@
           }
         ],
         "videoCreationProperties": {
-          "title": "sample-hub-messages-video-sink",
+          "title": "mc-hub-messages-video-sink",
           "description": "Sample video using hub messages to video sink",
           "segmentLength": "PT30S"
         },
