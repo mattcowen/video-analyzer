@@ -80,6 +80,16 @@
                     {
                         "nodeName": "motionDetection",
                         "outputSelectors": []
+                    },
+                    {
+                        "nodeName": "rtspSource",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
                     }
                 ]
             }
