@@ -1,0 +1,154 @@
+{
+  "@apiVersion": "1.1",
+  "name": "McEVRVideoAndFile",
+    "properties": {
+        "description": "Event-based video recording to local files based on motion events",
+        "parameters": [
+            {
+                "name": "fileSinkOutputName",
+                "type": "string",
+                "description": "file sink output name",
+                "default": "filesinkOutput"
+            },
+            {
+                "name": "motionSensitivity",
+                "type": "string",
+                "description": "motion detection sensitivity",
+                "default": "medium"
+            },
+            {
+                "name": "rtspPassword",
+                "type": "string",
+                "description": "rtsp source password.",
+                "default": "dummyPassword"
+            },
+            {
+                "name": "rtspUrl",
+                "type": "string",
+                "description": "rtsp Url"
+            },
+            {
+                "name": "rtspUserName",
+                "type": "string",
+                "description": "rtsp source user name.",
+                "default": "dummyUserName"
+            }
+        ],
+        "sources": [
+            {
+                "@type": "#Microsoft.VideoAnalyzer.RtspSource",
+                "name": "rtspSource",
+                "transport": "tcp",
+                "endpoint": {
+                    "@type": "#Microsoft.VideoAnalyzer.UnsecuredEndpoint",
+                    "url": "${rtspUrl}",
+                    "credentials": {
+                        "@type": "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials",
+                        "username": "${rtspUserName}",
+                        "password": "${rtspPassword}"
+                    }
+                }
+            }
+        ],
+        "processors": [
+            {
+                "@type": "#Microsoft.VideoAnalyzer.MotionDetectionProcessor",
+                "sensitivity": "${motionSensitivity}",
+                "eventAggregationWindow": "PT1S",
+                "name": "motionDetection",
+                "inputs": [
+                    {
+                        "nodeName": "rtspSource",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.SignalGateProcessor",
+                "activationEvaluationWindow": "PT1S",
+                "activationSignalOffset": "PT0S",
+                "minimumActivationTime": "PT30S",
+                "maximumActivationTime": "PT30S",
+                "name": "signalGateProcessor",
+                "inputs": [
+                    {
+                        "nodeName": "motionDetection",
+                        "outputSelectors": []
+                    },
+                    {
+                        "nodeName": "rtspSource",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "sinks": [
+            {
+                "@type": "#Microsoft.VideoAnalyzer.FileSink",
+                "baseDirectoryPath": "/var/media",
+                "fileNamePattern": "McEVRToFilesAndVideo-${System.TopologyName}-${System.PipelineName}-${fileSinkOutputName}-${System.Runtime.DateTime}",
+                "maximumSizeMiB": "512",
+                "name": "fileSink",
+                "inputs": [
+                    {
+                        "nodeName": "signalGateProcessor",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.IotHubMessageSink",
+                "hubOutputName": "iothubsinkoutput",
+                "name": "iotHubMessageSink",
+                "inputs": [
+                    {
+                        "nodeName": "motionDetection",
+                        "outputSelectors": []
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.VideoSink",
+                "localMediaCachePath": "/var/lib/videoanalyzer/tmp/",
+                "localMediaCacheMaximumSizeMiB": "2048",
+                "videoName": "McEVRToFilesAndVideo-${System.TopologyName}-${System.PipelineName}-${fileSinkOutputName}-${System.Runtime.DateTime}",
+                "videoCreationProperties": {
+                    "title": "McEVRToFilesAndVideo",
+                    "description": "Sample video using motion video sink and files",
+                    "segmentLength": "PT30S"
+                },
+                "name": "videoSink",
+                "inputs": [
+                    {
+                        "nodeName": "signalGateProcessor",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
