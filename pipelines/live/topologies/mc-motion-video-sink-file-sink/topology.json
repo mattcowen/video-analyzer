@@ -80,16 +80,6 @@
                     {
                         "nodeName": "motionDetection",
                         "outputSelectors": []
-                    },
-                    {
-                        "nodeName": "rtspSource",
-                        "outputSelectors": [
-                            {
-                                "property": "mediaType",
-                                "operator": "is",
-                                "value": "video"
-                            }
-                        ]
                     }
                 ]
             }
@@ -129,7 +119,7 @@
                 "@type": "#Microsoft.VideoAnalyzer.VideoSink",
                 "localMediaCachePath": "/var/lib/videoanalyzer/tmp/",
                 "localMediaCacheMaximumSizeMiB": "2048",
-                "videoName": "McEVRToFilesAndVideo-${System.TopologyName}-${System.PipelineName}-${fileSinkOutputName}-${System.Runtime.DateTime}",
+                "videoName": "McEVRToFilesAndVideo",
                 "videoCreationProperties": {
                     "title": "McEVRToFilesAndVideo",
                     "description": "Sample video using motion video sink and files",
