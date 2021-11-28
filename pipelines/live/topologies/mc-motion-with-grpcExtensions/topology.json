@@ -71,6 +71,12 @@
               "default": "medium"
           },
           {
+              "name": "rtspUserName",
+              "type": "string",
+              "description": "rtsp source user name.",
+              "default": "testuser"
+          },
+          {
               "name": "rtspPassword",
               "type": "string",
               "description": "rtsp source password.",
@@ -81,12 +87,6 @@
               "type": "string",
               "description": "The source rtsp:// url for the video",
               "default": "rtsp://rtspsim:554/media/lots_015.mkv"
-          },
-          {
-              "name": "rtspUserName",
-              "type": "string",
-              "description": "rtsp source user name.",
-              "default": "testuser"
           }
       ],
       "sources": [
@@ -251,7 +251,7 @@
           },
           {
               "@type": "#Microsoft.VideoAnalyzer.VideoSink",
-              "localMediaCachePath": "/var/lib/videoanalyzer/tmp/",
+              "localMediaCachePath": "/var/lib/videoanalyzer/tmp",
               "localMediaCacheMaximumSizeMiB": "2048",
               "videoName": "motion-with-multiple-grpc-extensions",
               "videoCreationProperties": {
