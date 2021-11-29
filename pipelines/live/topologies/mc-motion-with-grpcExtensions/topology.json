@@ -133,7 +133,7 @@
                   }
               },
               "samplingOptions": {
-                  "maximumSamplesPerSecond": "10",
+                  "maximumSamplesPerSecond": "30",
                   "skipSamplesWithoutAnnotation": "false"
               },
               "name": "grpcAvaExtension",
@@ -191,7 +191,7 @@
                   }
               },
               "samplingOptions": {
-                  "maximumSamplesPerSecond": "10",
+                  "maximumSamplesPerSecond": "30",
                   "skipSamplesWithoutAnnotation": "false"
               },
               "name": "openVinoExtension",
