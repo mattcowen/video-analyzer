@@ -1,0 +1,307 @@
+{
+    "@apiVersion": "1.1",
+    "name": "EVROnMotionPlusGrpcExtension",
+    "properties": {
+        "description": "Event-based video recording to Video Sink based on motion events, and using gRPC Extension to send images to an external inference engine",
+        "parameters": [
+            {
+                "name": "extensionConfiguration",
+                "type": "string",
+                "description": "Optional extension configuration for the gRPC server",
+                "default": "{}"
+            },
+            {
+                "name": "frameHeight",
+                "type": "string",
+                "description": "Height of the video frame to be received from AVA.",
+                "default": "416"
+            },
+            {
+                "name": "frameWidth",
+                "type": "string",
+                "description": "Width of the video frame to be received from AVA.",
+                "default": "416"
+            },
+            {
+                "name": "grpcAvaExtensionAddress",
+                "type": "string",
+                "description": "grpc AVA Extension Address",
+                "default": "tcp://avaextension:44000"
+            },
+            {
+                "name": "grpcExtensionPassword",
+                "type": "string",
+                "description": "inferencing endpoint password.",
+                "default": "dummyPassword"
+            },
+            {
+                "name": "grpcExtensionUserName",
+                "type": "string",
+                "description": "inferencing endpoint user name.",
+                "default": "dummyUserName"
+            },
+            {
+                "name": "grpcOpenVinoExtensionAddress",
+                "type": "string",
+                "description": "grpc OpenVINO Extension Address",
+                "default": "tcp://openvinoextension:5001"
+            },
+            {
+                "name": "hubSinkOutputName",
+                "type": "string",
+                "description": "Hub sink output name",
+                "default": "iothubsinkoutput"
+            },
+            {
+                "name": "imageQuality",
+                "type": "string",
+                "description": "image encoding quality for frames (valid for JPG encoding)",
+                "default": "90"
+            },
+            {
+                "name": "imageScaleMode",
+                "type": "string",
+                "description": "image scaling mode",
+                "default": "pad"
+            },
+            {
+                "name": "motionSensitivity",
+                "type": "string",
+                "description": "motion detection sensitivity",
+                "default": "medium"
+            },
+            {
+                "name": "rtspUserName",
+                "type": "string",
+                "description": "rtsp source user name.",
+                "default": "testuser"
+            },
+            {
+                "name": "rtspPassword",
+                "type": "string",
+                "description": "rtsp source password.",
+                "default": "testpassword"
+            },
+            {
+                "name": "rtspUrl",
+                "type": "string",
+                "description": "The source rtsp:// url for the video",
+                "default": "rtsp://rtspsim:554/media/lots_015.mkv"
+            }
+        ],
+        "sources": [
+            {
+                "@type": "#Microsoft.VideoAnalyzer.RtspSource",
+                "name": "rtspSource",
+                "transport": "tcp",
+                "endpoint": {
+                    "@type": "#Microsoft.VideoAnalyzer.UnsecuredEndpoint",
+                    "url": "${rtspUrl}",
+                    "credentials": {
+                        "@type": "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials",
+                        "username": "${rtspUserName}",
+                        "password": "${rtspPassword}"
+                    }
+                }
+            }
+        ],
+        "processors": [
+            {
+                "@type": "#Microsoft.VideoAnalyzer.GrpcExtension",
+                "dataTransfer": {
+                    "sharedMemorySizeMiB": "75",
+                    "mode": "sharedMemory"
+                },
+                "endpoint": {
+                    "@type": "#Microsoft.VideoAnalyzer.UnsecuredEndpoint",
+                    "url": "${grpcAvaExtensionAddress}",
+                    "credentials": {
+                        "@type": "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials",
+                        "username": "${grpcExtensionUserName}",
+                        "password": "${grpcExtensionPassword}"
+                    }
+                },
+                "image": {
+                    "scale": {
+                        "mode": "${imageScaleMode}",
+                        "width": "${frameWidth}",
+                        "height": "${frameHeight}"
+                    },
+                    "format": {
+                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatJpeg",
+                        "quality": "${imageQuality}"
+                    }
+                },
+                "samplingOptions": {
+                    "maximumSamplesPerSecond": "30",
+                    "skipSamplesWithoutAnnotation": "false"
+                },
+                "name": "grpcAvaExtension",
+                "inputs": [
+                    {
+                        "nodeName": "motionDetection",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.MotionDetectionProcessor",
+                "sensitivity": "${motionSensitivity}",
+                "eventAggregationWindow": "PT1S",
+                "name": "motionDetection",
+                "inputs": [
+                    {
+                        "nodeName": "rtspSource",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.GrpcExtension",
+                "dataTransfer": {
+                    "sharedMemorySizeMiB": "64",
+                    "mode": "sharedMemory"
+                },
+                "extensionConfiguration": "${extensionConfiguration}",
+                "endpoint": {
+                    "@type": "#Microsoft.VideoAnalyzer.UnsecuredEndpoint",
+                    "url": "${grpcOpenVinoExtensionAddress}",
+                    "credentials": {
+                        "@type": "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials",
+                        "username": "${grpcExtensionUserName}",
+                        "password": "${grpcExtensionPassword}"
+                    }
+                },
+                "image": {
+                    "format": {
+                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatRaw",
+                        "pixelFormat": "bgr24"
+                    }
+                },
+                "samplingOptions": {
+                    "maximumSamplesPerSecond": "30",
+                    "skipSamplesWithoutAnnotation": "false"
+                },
+                "name": "openVinoExtension",
+                "inputs": [
+                    {
+                        "nodeName": "motionDetection",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.ObjectTrackingProcessor",
+                "name": "objectTracker",
+                "inputs": [
+                    {
+                        "nodeName": "openVinoExtension"
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.LineCrossingProcessor",
+                "name": "lineCrossing",
+                "inputs": [
+                    {
+                        "nodeName": "objectTracker"
+                    }
+                ],
+                "lines": [
+                    {
+                        "@type": "#Microsoft.VideoAnalyzer.NamedLineString",
+                        "name": "LineCrossing1",
+                        "line": "[[0.1,0.3], [0.6,0.3]]"
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.SignalGateProcessor",
+                "activationEvaluationWindow": "PT1S",
+                "activationSignalOffset": "PT0S",
+                "minimumActivationTime": "PT30S",
+                "maximumActivationTime": "PT30S",
+                "name": "signalGateProcessor",
+                "inputs": [
+                    {
+                        "nodeName": "motionDetection",
+                        "outputSelectors": []
+                    },
+                    {
+                        "nodeName": "rtspSource",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "sinks": [
+            {
+                "@type": "#Microsoft.VideoAnalyzer.IotHubMessageSink",
+                "hubOutputName": "${hubSinkOutputName}",
+                "name": "hubSink",
+                "inputs": [
+                    {
+                        "nodeName": "grpcAvaExtension",
+                        "outputSelectors": []
+                    },
+                    {
+                        "nodeName": "openVinoExtension",
+                        "outputSelectors": []
+                    },
+                    {
+                        "nodeName": "lineCrossing",
+                        "outputSelectors": []
+                    }
+                ]
+            },
+            {
+                "@type": "#Microsoft.VideoAnalyzer.VideoSink",
+                "localMediaCachePath": "/var/lib/videoanalyzer/tmp",
+                "localMediaCacheMaximumSizeMiB": "2048",
+                "videoName": "motion-with-multiple-grpc-extensions",
+                "videoCreationProperties": {
+                    "title": "motion-with-multiple-grpc-extensions",
+                    "description": "Sample video using motion with gRPC extension",
+                    "segmentLength": "PT30S"
+                },
+                "name": "videoSink",
+                "inputs": [
+                    {
+                        "nodeName": "signalGateProcessor",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
