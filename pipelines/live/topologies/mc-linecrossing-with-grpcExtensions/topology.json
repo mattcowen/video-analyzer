@@ -171,50 +171,6 @@
             {
                 "@type": "#Microsoft.VideoAnalyzer.GrpcExtension",
                 "dataTransfer": {
-                    "sharedMemorySizeMiB": "75",
-                    "mode": "sharedMemory"
-                },
-                "endpoint": {
-                    "@type": "#Microsoft.VideoAnalyzer.UnsecuredEndpoint",
-                    "url": "${grpcAvaExtensionAddress}",
-                    "credentials": {
-                        "@type": "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials",
-                        "username": "${grpcExtensionUserName}",
-                        "password": "${grpcExtensionPassword}"
-                    }
-                },
-                "image": {
-                    "scale": {
-                        "mode": "${imageScaleMode}",
-                        "width": "${frameWidth}",
-                        "height": "${frameHeight}"
-                    },
-                    "format": {
-                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatJpeg",
-                        "quality": "${imageQuality}"
-                    }
-                },
-                "samplingOptions": {
-                    "maximumSamplesPerSecond": "5",
-                    "skipSamplesWithoutAnnotation": "false"
-                },
-                "name": "grpcLineCrossingExtension",
-                "inputs": [
-                    {
-                        "nodeName": "rtspSource",
-                        "outputSelectors": [
-                            {
-                                "property": "mediaType",
-                                "operator": "is",
-                                "value": "video"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "@type": "#Microsoft.VideoAnalyzer.GrpcExtension",
-                "dataTransfer": {
                     "sharedMemorySizeMiB": "64",
                     "mode": "sharedMemory"
                 },
@@ -257,7 +213,7 @@
                 "name": "objectTracker",
                 "inputs": [
                     {
-                        "nodeName": "grpcLineCrossingExtension"
+                        "nodeName": "openVinoExtension"
                     }
                 ]
             },
