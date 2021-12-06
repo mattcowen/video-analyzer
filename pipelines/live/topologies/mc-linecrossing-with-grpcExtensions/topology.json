@@ -52,12 +52,7 @@
                 "description": "Hub sink output name",
                 "default": "iothubsinkoutput"
             },
-            {
-                "name": "imageQuality",
-                "type": "string",
-                "description": "image encoding quality for frames (valid for JPG encoding)",
-                "default": "90"
-            },
+            
             {
                 "name": "imageScaleMode",
                 "type": "string",
@@ -128,8 +123,7 @@
                         "height": "${frameHeight}"
                     },
                     "format": {
-                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatBmp",
-                        "quality": "${imageQuality}"
+                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatBmp"
                     }
                 },
                 "samplingOptions": {
