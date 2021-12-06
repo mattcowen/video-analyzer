@@ -52,7 +52,12 @@
                 "description": "Hub sink output name",
                 "default": "iothubsinkoutput"
             },
-            
+            {
+                "name": "imageQuality",
+                "type": "string",
+                "description": "image encoding quality for frames (valid for JPG encoding)",
+                "default": "90"
+            },
             {
                 "name": "imageScaleMode",
                 "type": "string",
@@ -123,7 +128,8 @@
                         "height": "${frameHeight}"
                     },
                     "format": {
-                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatBmp"
+                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatJpeg",
+                        "quality": "${imageQuality}"
                     }
                 },
                 "samplingOptions": {
@@ -203,11 +209,54 @@
                 ]
             },
             {
+                "@type": "#Microsoft.VideoAnalyzer.GrpcExtension",
+                "dataTransfer": {
+                    "sharedMemorySizeMiB": "75",
+                    "mode": "sharedMemory"
+                },
+                "endpoint": {
+                    "@type": "#Microsoft.VideoAnalyzer.UnsecuredEndpoint",
+                    "url": "tcp://lineextension:44001",
+                    "credentials": {
+                        "@type": "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials",
+                        "username": "${grpcExtensionUserName}",
+                        "password": "${grpcExtensionPassword}"
+                    }
+                },
+                "image": {
+                    "scale": {
+                        "mode": "${imageScaleMode}",
+                        "width": "${frameWidth}",
+                        "height": "${frameHeight}"
+                    },
+                    "format": {
+                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatBmp"
+                    }
+                },
+                "samplingOptions": {
+                    "maximumSamplesPerSecond": "2",
+                    "skipSamplesWithoutAnnotation": "false"
+                },
+                "name": "lineAvaExtension",
+                "inputs": [
+                    {
+                        "nodeName": "motionDetection",
+                        "outputSelectors": [
+                            {
+                                "property": "mediaType",
+                                "operator": "is",
+                                "value": "video"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
                 "@type": "#Microsoft.VideoAnalyzer.ObjectTrackingProcessor",
                 "name": "objectTracker",
                 "inputs": [
                     {
-                        "nodeName": "grpcAvaExtension"
+                        "nodeName": "lineAvaExtension"
                     }
                 ]
             },
@@ -223,7 +272,7 @@
                     {
                         "@type": "#Microsoft.VideoAnalyzer.NamedLineString",
                         "name": "LineCrossing1",
-                        "line": "[[0.5,0.1], [0.5,1]]"
+                        "line": "[[0.5,0.1], [0.5,1.0]]"
                     }
                 ]
             },
