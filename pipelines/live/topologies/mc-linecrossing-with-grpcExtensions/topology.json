@@ -128,12 +128,11 @@
                         "height": "${frameHeight}"
                     },
                     "format": {
-                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatJpeg",
-                        "quality": "${imageQuality}"
+                        "@type": "#Microsoft.VideoAnalyzer.ImageFormatBmp"
                     }
                 },
                 "samplingOptions": {
-                    "maximumSamplesPerSecond": "30",
+                    "maximumSamplesPerSecond": "10",
                     "skipSamplesWithoutAnnotation": "false"
                 },
                 "name": "grpcAvaExtension",
@@ -191,7 +190,7 @@
                     }
                 },
                 "samplingOptions": {
-                    "maximumSamplesPerSecond": "30",
+                    "maximumSamplesPerSecond": "10",
                     "skipSamplesWithoutAnnotation": "false"
                 },
                 "name": "openVinoExtension",
