@@ -216,7 +216,7 @@
                 },
                 "endpoint": {
                     "@type": "#Microsoft.VideoAnalyzer.UnsecuredEndpoint",
-                    "url": "tcp://lineextension:8181",
+                    "url": "tcp://lineextension:5002",
                     "credentials": {
                         "@type": "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials",
                         "username": "${grpcExtensionUserName}",
