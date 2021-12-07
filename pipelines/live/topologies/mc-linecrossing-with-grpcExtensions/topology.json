@@ -223,7 +223,7 @@
                         "username": "${grpcExtensionUsername}",
                         "password": "${grpcExtensionPassword}"
                     },
-                    "url": "${inferenceUrl}"
+                    "url": "http://yolov3/score"
                 },
                 "image": {
                     "scale": {
