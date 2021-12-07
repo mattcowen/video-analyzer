@@ -209,54 +209,42 @@
                 ]
             },
             {
-                "@type": "#Microsoft.VideoAnalyzer.GrpcExtension",
-                "dataTransfer": {
-                    "sharedMemorySizeMiB": "75",
-                    "mode": "sharedMemory"
-                },
+                "@type": "#Microsoft.VideoAnalyzer.HttpExtension",
+                "name": "httpExtension",
+                "inputs": [
+                    {
+                        "nodeName": "rtspSource"
+                    }
+                ],
                 "endpoint": {
                     "@type": "#Microsoft.VideoAnalyzer.UnsecuredEndpoint",
-                    "url": "tcp://lineextension:5002",
                     "credentials": {
                         "@type": "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials",
-                        "username": "${grpcExtensionUserName}",
+                        "username": "${grpcExtensionUsername}",
                         "password": "${grpcExtensionPassword}"
-                    }
+                    },
+                    "url": "${inferenceUrl}"
                 },
                 "image": {
                     "scale": {
-                        "mode": "${imageScaleMode}",
-                        "width": "${frameWidth}",
-                        "height": "${frameHeight}"
+                        "width": "416",
+                        "height": "416"
                     },
                     "format": {
                         "@type": "#Microsoft.VideoAnalyzer.ImageFormatBmp"
                     }
                 },
                 "samplingOptions": {
-                    "maximumSamplesPerSecond": "2",
-                    "skipSamplesWithoutAnnotation": "false"
-                },
-                "name": "lineAvaExtension",
-                "inputs": [
-                    {
-                        "nodeName": "motionDetection",
-                        "outputSelectors": [
-                            {
-                                "property": "mediaType",
-                                "operator": "is",
-                                "value": "video"
-                            }
-                        ]
-                    }
-                ]
+                    "skipSamplesWithoutAnnotation": "False",
+                    "maximumSamplesPerSecond": "2.0"
+                }
             },
             {
                 "@type": "#Microsoft.VideoAnalyzer.ObjectTrackingProcessor",
                 "name": "objectTracker",
                 "inputs": [
                     {
-                        "nodeName": "lineAvaExtension"
+                        "nodeName": "httpExtension"
                     }
                 ]
             },
